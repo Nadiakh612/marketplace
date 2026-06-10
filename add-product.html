@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>List a Dress — Bloom</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #FBF7F2;
+      --surface: #FFFFFF;
+      --surface2: #F5EFE7;
+      --text: #1C1410;
+      --text-muted: #6B5E52;
+      --text-soft: #A8998C;
+      --accent: #C96B3A;
+      --accent-light: #F5E0D2;
+      --accent-dark: #8F4620;
+      --pink: #D4607A;
+      --pink-light: #FAE4EA;
+      --sage: #5E7A61;
+      --sage-light: #DFF0E1;
+      --border: rgba(28,20,16,0.09);
+      --border-strong: rgba(28,20,16,0.18);
+      --border-focus: #C96B3A;
+      --radius: 16px;
+      --radius-sm: 9px;
+      --radius-pill: 100px;
+      --error: #C62828;
+      --error-bg: #FFEBEE;
+    }
+
+    body {
+      font-family: 'Jost', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(251,247,242,0.93);
+      backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--border);
+      padding: 0 2.5rem;
+      display: flex; align-items: center; justify-content: space-between;
+      height: 68px;
+    }
+    .nav-logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.6rem; letter-spacing: -0.01em;
+      color: var(--text); text-decoration: none;
+    }
+    .nav-logo span { color: var(--accent); font-style: italic; }
+    .nav-link {
+      font-size: 0.85rem; font-weight: 500; color: var(--text-muted);
+      text-decoration: none; padding: 0.45rem 1rem; border-radius: var(--radius-pill);
+      border: 1px solid var(--border-strong); background: var(--surface);
+      transition: all 0.15s; display: inline-flex; align-items: center; gap: 0.4rem;
+    }
+    .nav-link:hover { background: var(--surface2); color: var(--text); }
+
+    /* ── PAGE HEADER ── */
+    .page-header {
+      max-width: 720px; margin: 0 auto;
+      padding: 4rem 2rem 2.5rem;
+      text-align: center;
+    }
+    .page-eyebrow {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      font-size: 0.75rem; font-weight: 600; letter-spacing: 0.1em;
+      text-transform: uppercase; color: var(--accent);
+      background: var(--accent-light); border-radius: var(--radius-pill);
+      padding: 0.35rem 1rem; margin-bottom: 1.5rem;
+    }
+    .page-eyebrow::before { content: '✦'; }
+    .page-header h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2rem, 4vw, 3rem);
+      line-height: 1.15; letter-spacing: -0.02em; color: var(--text);
+      margin-bottom: 0.75rem;
+    }
+    .page-header h1 em { font-style: italic; color: var(--accent); }
+    .page-header p {
+      font-size: 1rem; color: var(--text-muted); line-height: 1.7;
+      font-weight: 300; max-width: 460px; margin: 0 auto;
+    }
+
+    /* ── FORM CARD ── */
+    .form-wrap {
+      max-width: 680px; margin: 0 auto;
+      padding: 0 2rem 6rem;
+    }
+    .form-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 2.5rem;
+      box-shadow: 0 4px 24px rgba(28,20,16,0.05);
+    }
+
+    /* ── SECTION DIVIDERS ── */
+    .form-section { margin-bottom: 2rem; }
+    .form-section-title {
+      font-size: 0.72rem; font-weight: 600; letter-spacing: 0.1em;
+      text-transform: uppercase; color: var(--text-soft);
+      margin-bottom: 1.25rem; padding-bottom: 0.6rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    /* ── FIELDS ── */
+    .field { margin-bottom: 1.25rem; }
+    .field label {
+      display: block; font-size: 0.84rem; font-weight: 500;
+      color: var(--text-muted); margin-bottom: 0.45rem; letter-spacing: 0.01em;
+    }
+    .field label .req { color: var(--accent); margin-left: 2px; }
+    .field label .hint {
+      font-size: 0.76rem; font-weight: 400; color: var(--text-soft);
+      margin-left: 0.4rem;
+    }
+
+    .field input,
+    .field select,
+    .field textarea {
+      width: 100%;
+      font-family: 'Jost', sans-serif;
+      font-size: 0.93rem; font-weight: 400;
+      color: var(--text);
+      background: var(--bg);
+      border: 1.5px solid var(--border-strong);
+      border-radius: var(--radius-sm);
+      padding: 0.7rem 1rem;
+      outline: none;
+      transition: border-color 0.15s, box-shadow 0.15s, background 0.15s;
+      -webkit-appearance: none;
+    }
+    .field input::placeholder,
+    .field textarea::placeholder { color: var(--text-soft); }
+    .field input:focus,
+    .field select:focus,
+    .field textarea:focus {
+      border-color: var(--border-focus);
+      background: var(--surface);
+      box-shadow: 0 0 0 3px rgba(201,107,58,0.12);
+    }
+    .field textarea { resize: vertical; min-height: 110px; line-height: 1.65; }
+    .field select { cursor: pointer; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23A8998C' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 1rem center; padding-right: 2.5rem; }
+
+    /* field error state */
+    .field.error input,
+    .field.error select,
+    .field.error textarea {
+      border-color: var(--error);
+      box-shadow: 0 0 0 3px rgba(198,40,40,0.1);
+    }
+    .field-error {
+      font-size: 0.77rem; color: var(--error);
+      margin-top: 0.35rem; display: none;
+    }
+    .field.error .field-error { display: block; }
+
+    /* ── TWO-COLUMN GRID ── */
+    .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+
+    /* ── IMAGE PREVIEW ── */
+    .img-field-wrap { position: relative; }
+    .img-preview {
+      margin-top: 0.5rem; width: 100%; aspect-ratio: 3/2;
+      border-radius: var(--radius-sm); overflow: hidden;
+      background: var(--surface2); border: 1.5px dashed var(--border-strong);
+      display: flex; align-items: center; justify-content: center;
+      transition: border-color 0.2s;
+    }
+    .img-preview img {
+      width: 100%; height: 100%; object-fit: cover; display: none;
+      border-radius: calc(var(--radius-sm) - 1px);
+    }
+    .img-preview .placeholder-text {
+      font-size: 0.78rem; color: var(--text-soft); text-align: center;
+      padding: 1rem; pointer-events: none;
+    }
+    .img-preview.has-img { border-style: solid; border-color: rgba(201,107,58,0.4); }
+    .img-preview.has-img img { display: block; }
+    .img-preview.has-img .placeholder-text { display: none; }
+
+    /* ── BADGE PILLS SELECT ── */
+    .badge-grid {
+      display: flex; gap: 0.5rem; flex-wrap: wrap; margin-top: 0.1rem;
+    }
+    .badge-option input[type="radio"] { position: absolute; opacity: 0; pointer-events: none; }
+    .badge-option label {
+      display: inline-block; font-size: 0.8rem; font-weight: 600;
+      padding: 0.35rem 0.9rem; border-radius: var(--radius-pill); cursor: pointer;
+      border: 1.5px solid var(--border-strong); background: var(--surface);
+      color: var(--text-muted); transition: all 0.15s; letter-spacing: 0.03em;
+      margin-bottom: 0;
+    }
+    .badge-option input:checked + label {
+      background: var(--text); color: #fff; border-color: var(--text);
+    }
+    .badge-option label:hover { border-color: var(--accent); color: var(--accent); }
+
+    /* ── SUBMIT ── */
+    .form-actions {
+      display: flex; align-items: center; justify-content: space-between;
+      padding-top: 1.5rem; border-top: 1px solid var(--border); gap: 1rem; flex-wrap: wrap;
+    }
+    .form-note { font-size: 0.78rem; color: var(--text-soft); line-height: 1.5; max-width: 320px; }
+    .btn-submit {
+      font-family: 'Jost', sans-serif; font-size: 0.9rem; font-weight: 600;
+      background: var(--accent); color: #fff; border: none; cursor: pointer;
+      padding: 0.75rem 2rem; border-radius: var(--radius-pill);
+      letter-spacing: 0.04em; transition: background 0.15s, transform 0.1s;
+      display: inline-flex; align-items: center; gap: 0.5rem; white-space: nowrap;
+    }
+    .btn-submit:hover { background: var(--accent-dark); }
+    .btn-submit:active { transform: scale(0.97); }
+    .btn-submit:disabled { background: var(--text-soft); cursor: not-allowed; transform: none; }
+    .spinner {
+      width: 16px; height: 16px; border: 2px solid rgba(255,255,255,0.4);
+      border-top-color: #fff; border-radius: 50%;
+      animation: spin 0.65s linear infinite; display: none;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── SUCCESS STATE ── */
+    #successMessage {
+      display: none;
+      background: var(--surface);
+      border: 1px solid rgba(94,122,97,0.3);
+      border-radius: var(--radius);
+      padding: 3rem 2rem;
+      text-align: center;
+      box-shadow: 0 4px 24px rgba(28,20,16,0.05);
+    }
+    .success-icon {
+      width: 64px; height: 64px; border-radius: 50%;
+      background: var(--sage-light); display: flex; align-items: center;
+      justify-content: center; font-size: 1.8rem; margin: 0 auto 1.5rem;
+    }
+    #successMessage h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.6rem; letter-spacing: -0.01em; margin-bottom: 0.6rem;
+    }
+    #successMessage p {
+      font-size: 0.93rem; color: var(--text-muted); line-height: 1.7;
+      max-width: 380px; margin: 0 auto 2rem; font-weight: 300;
+    }
+    .btn-back {
+      display: inline-flex; align-items: center; gap: 0.4rem;
+      font-family: 'Jost', sans-serif; font-size: 0.88rem; font-weight: 500;
+      background: var(--text); color: #fff; text-decoration: none;
+      padding: 0.65rem 1.5rem; border-radius: var(--radius-pill);
+      transition: background 0.15s; letter-spacing: 0.03em;
+    }
+    .btn-back:hover { background: #3A2A20; }
+    .btn-add-another {
+      display: inline-flex; align-items: center; gap: 0.4rem;
+      font-family: 'Jost', sans-serif; font-size: 0.88rem; font-weight: 500;
+      background: transparent; color: var(--text-muted); text-decoration: none;
+      padding: 0.65rem 1.5rem; border-radius: var(--radius-pill);
+      border: 1.5px solid var(--border-strong);
+      transition: all 0.15s; cursor: pointer; letter-spacing: 0.03em;
+    }
+    .btn-add-another:hover { background: var(--surface2); color: var(--text); }
+
+    /* ── ERROR BANNER ── */
+    #errorBanner {
+      display: none; background: var(--error-bg); border: 1px solid rgba(198,40,40,0.3);
+      border-radius: var(--radius-sm); padding: 0.85rem 1.1rem;
+      font-size: 0.85rem; color: var(--error); margin-bottom: 1.5rem;
+      line-height: 1.5;
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      background: var(--text); color: rgba(255,255,255,0.55);
+      text-align: center; padding: 2.5rem 2rem;
+      font-size: 0.82rem; letter-spacing: 0.02em;
+    }
+    footer strong { color: #fff; font-weight: 500; }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 600px) {
+      nav { padding: 0 1.25rem; }
+      .page-header { padding: 3rem 1.25rem 2rem; }
+      .form-wrap { padding: 0 1.25rem 4rem; }
+      .form-card { padding: 1.5rem; }
+      .field-row { grid-template-columns: 1fr; }
+      .form-actions { flex-direction: column; align-items: stretch; }
+      .btn-submit { justify-content: center; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="index.html" class="nav-logo">bl<span>oo</span>m</a>
+  <a href="index.html" class="nav-link">← Back to Marketplace</a>
+</nav>
+
+<!-- PAGE HEADER -->
+<div class="page-header">
+  <div class="page-eyebrow">Sell on Bloom</div>
+  <h1>List Your <em>Summer Dress</em></h1>
+  <p>Fill in the details below and your dress will appear on the marketplace after submission.</p>
+</div>
+
+<!-- FORM WRAP -->
+<div class="form-wrap">
+
+  <div id="errorBanner"></div>
+
+  <!-- FORM -->
+  <div class="form-card" id="formCard">
+
+    <!-- SECTION 1: Product Info -->
+    <div class="form-section">
+      <div class="form-section-title">Product Details</div>
+
+      <div class="field" id="field-name">
+        <label for="name">Dress Name <span class="req">*</span></label>
+        <input type="text" id="name" name="name" placeholder="e.g. Amalfi Linen Midi Dress" maxlength="80" />
+        <div class="field-error">Please enter a dress name.</div>
+      </div>
+
+      <div class="field-row">
+        <div class="field" id="field-category">
+          <label for="category">Category <span class="req">*</span></label>
+          <select id="category" name="category">
+            <option value="" disabled selected>Select style…</option>
+            <option value="midi">Midi</option>
+            <option value="maxi">Maxi</option>
+            <option value="mini">Mini</option>
+            <option value="wrap">Wrap</option>
+            <option value="floral">Floral</option>
+          </select>
+          <div class="field-error">Please select a category.</div>
+        </div>
+
+        <div class="field" id="field-price">
+          <label for="price">Price (€) <span class="req">*</span></label>
+          <input type="number" id="price" name="price" placeholder="e.g. 89.00" min="0" step="0.01" />
+          <div class="field-error">Please enter a valid price.</div>
+        </div>
+      </div>
+
+      <div class="field" id="field-desc">
+        <label for="desc">Description <span class="req">*</span> <span class="hint">— fabric, fit, details</span></label>
+        <textarea id="desc" name="desc" placeholder="e.g. Breathable 100% linen in warm terracotta. Adjustable waist tie, square neckline, midi-length skirt with side split…"></textarea>
+        <div class="field-error">Please add a short description.</div>
+      </div>
+    </div>
+
+    <!-- SECTION 2: Badge -->
+    <div class="form-section">
+      <div class="form-section-title">Badge</div>
+      <div class="badge-grid">
+        <div class="badge-option">
+          <input type="radio" id="badge-new" name="badge" value="new" checked />
+          <label for="badge-new">✨ New</label>
+        </div>
+        <div class="badge-option">
+          <input type="radio" id="badge-hot" name="badge" value="hot" />
+          <label for="badge-hot">🔥 Bestseller</label>
+        </div>
+        <div class="badge-option">
+          <input type="radio" id="badge-sale" name="badge" value="sale" />
+          <label for="badge-sale">🏷 Sale</label>
+        </div>
+        <div class="badge-option">
+          <input type="radio" id="badge-limited" name="badge" value="limited" />
+          <label for="badge-limited">⭐ Limited</label>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECTION 3: Images -->
+    <div class="form-section">
+      <div class="form-section-title">Product Images <span style="font-weight:300;text-transform:none;letter-spacing:0">(paste image URLs)</span></div>
+
+      <div class="field" id="field-img1">
+        <label for="img1">Image 1 <span class="req">*</span> <span class="hint">— main photo</span></label>
+        <input type="url" id="img1" name="img1" placeholder="https://…" oninput="previewImg('img1','preview1')" />
+        <div class="field-error">Please enter a valid URL for Image 1.</div>
+        <div class="img-preview" id="preview1">
+          <img src="" alt="Preview 1" id="previewImg1" />
+          <div class="placeholder-text">📷 Image preview will appear here</div>
+        </div>
+      </div>
+
+      <div class="field" id="field-img2">
+        <label for="img2">Image 2 <span class="hint">— optional</span></label>
+        <input type="url" id="img2" name="img2" placeholder="https://…" oninput="previewImg('img2','preview2')" />
+        <div class="img-preview" id="preview2">
+          <img src="" alt="Preview 2" id="previewImg2" />
+          <div class="placeholder-text">📷 Image preview will appear here</div>
+        </div>
+      </div>
+
+      <div class="field" id="field-img3">
+        <label for="img3">Image 3 <span class="hint">— optional</span></label>
+        <input type="url" id="img3" name="img3" placeholder="https://…" oninput="previewImg('img3','preview3')" />
+        <div class="img-preview" id="preview3">
+          <img src="" alt="Preview 3" id="previewImg3" />
+          <div class="placeholder-text">📷 Image preview will appear here</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ACTIONS -->
+    <div class="form-actions">
+      <p class="form-note">Your listing will be submitted to the marketplace and saved in Google Sheets.</p>
+      <button class="btn-submit" id="submitBtn" onclick="handleSubmit()">
+        <span id="submitLabel">Publish Listing</span>
+        <span class="spinner" id="submitSpinner"></span>
+      </button>
+    </div>
+  </div>
+
+  <!-- SUCCESS STATE -->
+  <div id="successMessage">
+    <div class="success-icon">✓</div>
+    <h2>Dress Listed!</h2>
+    <p>Your dress has been successfully submitted and saved to the marketplace. It will appear in the listing shortly.</p>
+    <div style="display:flex;gap:0.75rem;justify-content:center;flex-wrap:wrap;">
+      <a href="index.html" class="btn-back">← View Marketplace</a>
+      <button class="btn-add-another" onclick="resetForm()">+ Add Another Dress</button>
+    </div>
+  </div>
+
+</div>
+
+<footer>
+  <strong>bloom.</strong> &nbsp;·&nbsp; Summer Dress Marketplace &nbsp;·&nbsp; &copy; 2025 All rights reserved
+</footer>
+
+<script>
+  const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbymcHdW6tqtyTrAk9fJMEEsw15spxPLhzbID_wsdpLSBmtD_sMsKumHmltfZUmc6r7V6Q/exec";
+
+  // Live image preview
+  function previewImg(inputId, previewId) {
+    const url = document.getElementById(inputId).value.trim();
+    const wrap = document.getElementById(previewId);
+    const img = wrap.querySelector('img');
+    if (url) {
+      img.src = url;
+      img.onload = () => wrap.classList.add('has-img');
+      img.onerror = () => { wrap.classList.remove('has-img'); img.src = ''; };
+    } else {
+      wrap.classList.remove('has-img');
+      img.src = '';
+    }
+  }
+
+  // Validate a single field
+  function validateField(id, condition) {
+    const fieldEl = document.getElementById('field-' + id);
+    if (!fieldEl) return condition;
+    if (!condition) fieldEl.classList.add('error');
+    else fieldEl.classList.remove('error');
+    return condition;
+  }
+
+  function validate() {
+    let ok = true;
+    ok = validateField('name', document.getElementById('name').value.trim().length > 0) && ok;
+    ok = validateField('category', document.getElementById('category').value !== '') && ok;
+    ok = validateField('price', parseFloat(document.getElementById('price').value) > 0) && ok;
+    ok = validateField('desc', document.getElementById('desc').value.trim().length > 10) && ok;
+    const img1 = document.getElementById('img1').value.trim();
+    ok = validateField('img1', img1.length > 0 && img1.startsWith('http')) && ok;
+    return ok;
+  }
+
+  async function handleSubmit() {
+    document.getElementById('errorBanner').style.display = 'none';
+
+    if (!validate()) {
+      document.getElementById('errorBanner').textContent = 'Please fill in all required fields before submitting.';
+      document.getElementById('errorBanner').style.display = 'block';
+      window.scrollTo({ top: document.querySelector('.field.error')?.offsetTop - 100 || 0, behavior: 'smooth' });
+      return;
+    }
+
+    const btn = document.getElementById('submitBtn');
+    const label = document.getElementById('submitLabel');
+    const spinner = document.getElementById('submitSpinner');
+    btn.disabled = true;
+    label.textContent = 'Publishing…';
+    spinner.style.display = 'block';
+
+    const badge = document.querySelector('input[name="badge"]:checked').value;
+    const payload = {
+      name:     document.getElementById('name').value.trim(),
+      category: document.getElementById('category').value,
+      desc:     document.getElementById('desc').value.trim(),
+      price:    document.getElementById('price').value.trim(),
+      badge:    badge,
+      img1:     document.getElementById('img1').value.trim(),
+      img2:     document.getElementById('img2').value.trim(),
+      img3:     document.getElementById('img3').value.trim(),
+    };
+
+    // If placeholder not replaced, show success anyway (dev/demo mode)
+    if (APPS_SCRIPT_URL === "PASTE_YOUR_GOOGLE_APPS_SCRIPT_URL_HERE") {
+      setTimeout(showSuccess, 800);
+      return;
+    }
+
+    try {
+      await fetch(APPS_SCRIPT_URL, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      showSuccess();
+    } catch (err) {
+      btn.disabled = false;
+      label.textContent = 'Publish Listing';
+      spinner.style.display = 'none';
+      document.getElementById('errorBanner').textContent = 'Something went wrong. Please check your connection and try again.';
+      document.getElementById('errorBanner').style.display = 'block';
+    }
+  }
+
+  function showSuccess() {
+    document.getElementById('formCard').style.display = 'none';
+    document.getElementById('successMessage').style.display = 'block';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function resetForm() {
+    document.getElementById('formCard').style.display = 'block';
+    document.getElementById('successMessage').style.display = 'none';
+    document.getElementById('submitBtn').disabled = false;
+    document.getElementById('submitLabel').textContent = 'Publish Listing';
+    document.getElementById('submitSpinner').style.display = 'none';
+    document.getElementById('errorBanner').style.display = 'none';
+    ['name','category','desc','price','img1','img2','img3'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.value = '';
+      const field = document.getElementById('field-' + id);
+      if (field) field.classList.remove('error');
+    });
+    ['preview1','preview2','preview3'].forEach(id => {
+      const wrap = document.getElementById(id);
+      if (wrap) { wrap.classList.remove('has-img'); wrap.querySelector('img').src = ''; }
+    });
+    document.getElementById('badge-new').checked = true;
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  // Remove error state on input
+  ['name','category','desc','price','img1'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.addEventListener('input', () => {
+      document.getElementById('field-' + id)?.classList.remove('error');
+    });
+  });
+</script>
+
+</body>
+</html>

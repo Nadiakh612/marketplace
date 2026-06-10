@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bloom — Summer Dress Marketplace</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #FBF7F2;
+      --surface: #FFFFFF;
+      --surface2: #F5EFE7;
+      --text: #1C1410;
+      --text-muted: #6B5E52;
+      --text-soft: #A8998C;
+      --accent: #C96B3A;
+      --accent-light: #F5E0D2;
+      --accent-dark: #8F4620;
+      --pink: #D4607A;
+      --pink-light: #FAE4EA;
+      --sage: #5E7A61;
+      --sage-light: #DFF0E1;
+      --border: rgba(28,20,16,0.09);
+      --border-strong: rgba(28,20,16,0.16);
+      --radius: 16px;
+      --radius-sm: 9px;
+      --radius-pill: 100px;
+    }
+    body { font-family: 'Jost', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+
+    /* NAV */
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(251,247,242,0.93); backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--border);
+      padding: 0 2.5rem; display: flex; align-items: center; justify-content: space-between; height: 68px;
+    }
+    .nav-logo { font-family: 'Playfair Display', serif; font-size: 1.6rem; letter-spacing: -0.01em; color: var(--text); text-decoration: none; }
+    .nav-logo span { color: var(--accent); font-style: italic; }
+    .nav-center { display: flex; gap: 0.25rem; }
+    .nav-link { font-size: 0.85rem; font-weight: 500; color: var(--text-muted); text-decoration: none; padding: 0.4rem 0.9rem; border-radius: var(--radius-pill); transition: background 0.15s, color 0.15s; }
+    .nav-link:hover { background: var(--surface2); color: var(--text); }
+    .btn-nav { font-family: 'Jost', sans-serif; font-size: 0.85rem; font-weight: 500; background: var(--text); color: #fff; border: none; cursor: pointer; padding: 0.5rem 1.3rem; border-radius: var(--radius-pill); text-decoration: none; display: inline-block; transition: background 0.15s; letter-spacing: 0.02em; }
+    .btn-nav:hover { background: #3A2A20; }
+
+    /* HERO */
+    .hero { padding: 5rem 2rem 3.5rem; text-align: center; position: relative; overflow: hidden; }
+    .hero::before { content: ''; position: absolute; top: -60px; left: 50%; transform: translateX(-50%); width: 700px; height: 700px; border-radius: 50%; background: radial-gradient(circle, rgba(201,107,58,0.08) 0%, transparent 70%); pointer-events: none; }
+    .hero-eyebrow { display: inline-flex; align-items: center; gap: 0.5rem; font-size: 0.75rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent); background: var(--accent-light); border-radius: var(--radius-pill); padding: 0.35rem 1rem; margin-bottom: 1.75rem; }
+    .hero-eyebrow::before { content: '✦'; }
+    .hero h1 { font-family: 'Playfair Display', serif; font-size: clamp(2.6rem, 5.5vw, 4rem); line-height: 1.1; letter-spacing: -0.02em; color: var(--text); margin-bottom: 1rem; max-width: 680px; margin-left: auto; margin-right: auto; }
+    .hero h1 em { font-style: italic; color: var(--accent); }
+    .hero-sub { font-size: 1.05rem; color: var(--text-muted); line-height: 1.75; max-width: 500px; margin: 0 auto 2.5rem; font-weight: 300; }
+    .hero-search-wrap { display: flex; gap: 0.5rem; max-width: 460px; margin: 0 auto; background: var(--surface); border: 1.5px solid var(--border-strong); border-radius: var(--radius-pill); padding: 0.35rem 0.35rem 0.35rem 1.35rem; box-shadow: 0 4px 24px rgba(28,20,16,0.07); }
+    .hero-search-wrap input { flex: 1; border: none; background: transparent; font-family: 'Jost', sans-serif; font-size: 0.95rem; color: var(--text); outline: none; }
+    .hero-search-wrap input::placeholder { color: var(--text-soft); }
+    .btn-search { background: var(--accent); color: #fff; border: none; cursor: pointer; font-family: 'Jost', sans-serif; font-size: 0.85rem; font-weight: 500; padding: 0.55rem 1.3rem; border-radius: var(--radius-pill); letter-spacing: 0.03em; transition: background 0.15s; }
+    .btn-search:hover { background: var(--accent-dark); }
+
+    /* LOADING */
+    .loading-state { text-align: center; padding: 4rem 2rem; color: var(--text-muted); }
+    .loading-spinner { width: 36px; height: 36px; border: 3px solid var(--border-strong); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.7s linear infinite; margin: 0 auto 1rem; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* FILTERS */
+    .filters-section { max-width: 1240px; margin: 3rem auto 0; padding: 0 2rem 1.5rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem; }
+    .filter-chips { display: flex; gap: 0.45rem; flex-wrap: wrap; align-items: center; }
+    .filter-label { font-size: 0.78rem; font-weight: 600; color: var(--text-soft); text-transform: uppercase; letter-spacing: 0.06em; margin-right: 0.25rem; }
+    .chip { font-family: 'Jost', sans-serif; font-size: 0.82rem; font-weight: 500; padding: 0.38rem 1rem; border-radius: var(--radius-pill); cursor: pointer; border: 1px solid var(--border-strong); background: var(--surface); color: var(--text-muted); transition: all 0.15s; }
+    .chip:hover { border-color: var(--accent); color: var(--accent); }
+    .chip.active { background: var(--text); color: #fff; border-color: var(--text); }
+    .sort-wrap { display: flex; align-items: center; gap: 0.5rem; }
+    .sort-label { font-size: 0.8rem; color: var(--text-soft); font-weight: 500; }
+    .sort-select { font-family: 'Jost', sans-serif; font-size: 0.83rem; font-weight: 500; border: 1px solid var(--border-strong); border-radius: var(--radius-sm); background: var(--surface); color: var(--text-muted); padding: 0.4rem 0.75rem; cursor: pointer; outline: none; }
+
+    /* GRID */
+    .products-section { max-width: 1240px; margin: 0 auto; padding: 0 2rem 6rem; }
+    .grid-meta { display: flex; align-items: baseline; margin-bottom: 1.5rem; }
+    .grid-count { font-size: 0.83rem; color: var(--text-soft); }
+    .products-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.5rem; }
+
+    /* CARD */
+    .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; transition: transform 0.22s cubic-bezier(.25,.46,.45,.94), box-shadow 0.22s, border-color 0.2s; display: flex; flex-direction: column; }
+    .card:hover { transform: translateY(-5px); border-color: rgba(201,107,58,0.3); box-shadow: 0 16px 44px rgba(28,20,16,0.10); }
+
+    /* IMAGE SLIDER */
+    .card-slider { position: relative; width: 100%; aspect-ratio: 3/4; overflow: hidden; background: #f0ece6; }
+    .slider-track { display: flex; width: 100%; height: 100%; transition: transform 0.4s cubic-bezier(.25,.46,.45,.94); }
+    .slide { min-width: 100%; height: 100%; overflow: hidden; }
+    .slide img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.4s; }
+    .card:hover .slide img { transform: scale(1.03); }
+
+    .slider-btn { position: absolute; top: 50%; transform: translateY(-50%); width: 34px; height: 34px; border-radius: 50%; background: rgba(255,255,255,0.88); backdrop-filter: blur(6px); border: 1px solid var(--border); cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 1rem; color: var(--text); transition: all 0.15s; opacity: 0; z-index: 2; }
+    .card:hover .slider-btn { opacity: 1; }
+    .slider-btn:hover { background: #fff; transform: translateY(-50%) scale(1.08); }
+    .slider-btn.prev { left: 10px; }
+    .slider-btn.next { right: 10px; }
+
+    .slider-dots { position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%); display: flex; gap: 5px; z-index: 2; }
+    .dot { width: 6px; height: 6px; border-radius: 50%; background: rgba(255,255,255,0.55); border: 1px solid rgba(255,255,255,0.4); cursor: pointer; transition: all 0.2s; }
+    .dot.active { background: #fff; width: 18px; border-radius: 3px; }
+
+    .card-wishlist { position: absolute; top: 12px; right: 12px; width: 34px; height: 34px; border-radius: 50%; background: rgba(255,255,255,0.88); backdrop-filter: blur(6px); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 1rem; cursor: pointer; transition: all 0.15s; z-index: 2; color: var(--text-muted); }
+    .card-wishlist:hover { background: #fff; transform: scale(1.1); color: var(--pink); }
+    .card-wishlist.liked { color: var(--pink); background: var(--pink-light); }
+
+    /* CARD BODY */
+    .card-body { padding: 1.15rem 1.25rem 1.25rem; flex: 1; display: flex; flex-direction: column; }
+    .card-meta { display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.55rem; }
+    .card-category { font-size: 0.7rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); }
+    .badge { font-size: 0.68rem; font-weight: 600; padding: 0.22rem 0.6rem; border-radius: var(--radius-pill); letter-spacing: 0.03em; }
+    .badge-new { background: var(--sage-light); color: var(--sage); }
+    .badge-hot { background: var(--accent-light); color: var(--accent-dark); }
+    .badge-sale { background: var(--pink-light); color: var(--pink); }
+    .badge-limited { background: #F3EAF5; color: #7B3FA0; }
+    .card h3 { font-family: 'Playfair Display', serif; font-size: 1.12rem; line-height: 1.3; letter-spacing: -0.01em; color: var(--text); margin-bottom: 0.4rem; }
+    .card-desc { font-size: 0.84rem; color: var(--text-muted); line-height: 1.65; font-weight: 300; flex: 1; margin-bottom: 1rem; }
+    .card-sizes { display: flex; gap: 0.35rem; margin-bottom: 1rem; flex-wrap: wrap; }
+    .size-pill { font-size: 0.7rem; font-weight: 600; padding: 0.18rem 0.55rem; border-radius: var(--radius-pill); border: 1px solid var(--border-strong); color: var(--text-muted); background: var(--surface2); }
+    .card-footer { display: flex; align-items: center; justify-content: space-between; padding-top: 0.9rem; border-top: 1px solid var(--border); }
+    .price-wrap { display: flex; flex-direction: column; }
+    .price { font-family: 'Playfair Display', serif; font-size: 1.25rem; letter-spacing: -0.01em; color: var(--text); }
+    .price-original { font-size: 0.78rem; color: var(--text-soft); text-decoration: line-through; }
+    .btn-card { font-family: 'Jost', sans-serif; font-size: 0.82rem; font-weight: 500; padding: 0.5rem 1.1rem; border-radius: var(--radius-pill); cursor: pointer; border: 1.5px solid var(--text); background: transparent; color: var(--text); transition: all 0.15s; white-space: nowrap; }
+    .btn-card:hover { background: var(--text); color: #fff; }
+
+    /* FOOTER */
+    footer { background: var(--text); color: rgba(255,255,255,0.55); text-align: center; padding: 2.5rem 2rem; font-size: 0.82rem; letter-spacing: 0.02em; }
+    footer strong { color: #fff; font-weight: 500; }
+
+    /* RESPONSIVE */
+    @media (max-width: 680px) {
+      nav { padding: 0 1.25rem; }
+      .nav-center { display: none; }
+      .hero { padding: 3.5rem 1.25rem 2.5rem; }
+      .filters-section, .products-section { padding-left: 1.25rem; padding-right: 1.25rem; }
+      .products-grid { grid-template-columns: repeat(2, 1fr); gap: 0.85rem; }
+      .card:hover .slider-btn { opacity: 1; }
+    }
+    @media (max-width: 400px) { .products-grid { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="nav-logo">bl<span>oo</span>m</a>
+  <div class="nav-center">
+    <a href="#" class="nav-link">New Arrivals</a>
+    <a href="#" class="nav-link">Collections</a>
+    <a href="#" class="nav-link">Sale</a>
+  </div>
+  <a href="add-product.html" class="btn-nav">+ List a Dress</a>
+</nav>
+
+<section class="hero">
+  <div class="hero-eyebrow">Summer Collection 2025</div>
+  <h1>Find Your Perfect <em>Summer Dress</em></h1>
+  <p class="hero-sub">Handpicked summer dresses from independent designers and boutiques — light fabrics, beautiful prints, made for warm days.</p>
+  <div class="hero-search-wrap">
+    <input type="text" placeholder="Search dresses, styles, colours…" id="searchInput" />
+    <button class="btn-search" onclick="filterProducts()">Search</button>
+  </div>
+</section>
+
+<div class="filters-section">
+  <div class="filter-chips">
+    <span class="filter-label">Style:</span>
+    <button class="chip active" onclick="setFilter('all', this)">All</button>
+    <button class="chip" onclick="setFilter('midi', this)">Midi</button>
+    <button class="chip" onclick="setFilter('maxi', this)">Maxi</button>
+    <button class="chip" onclick="setFilter('mini', this)">Mini</button>
+    <button class="chip" onclick="setFilter('wrap', this)">Wrap</button>
+    <button class="chip" onclick="setFilter('floral', this)">Floral</button>
+  </div>
+  <div class="sort-wrap">
+    <span class="sort-label">Sort:</span>
+    <select class="sort-select" onchange="sortProducts(this.value)">
+      <option value="default">Featured</option>
+      <option value="price-asc">Price: Low to High</option>
+      <option value="price-desc">Price: High to Low</option>
+      <option value="name">Name A–Z</option>
+    </select>
+  </div>
+</div>
+
+<section class="products-section">
+  <div class="grid-meta">
+    <span class="grid-count" id="productCount"></span>
+  </div>
+  <div id="loadingState" class="loading-state">
+    <div class="loading-spinner"></div>
+    <p>Loading dresses…</p>
+  </div>
+  <div class="products-grid" id="productGrid"></div>
+</section>
+
+<footer>
+  <strong>bloom.</strong> &nbsp;·&nbsp; Summer Dress Marketplace &nbsp;·&nbsp; &copy; 2025 All rights reserved
+</footer>
+
+<script>
+  // ── Static product data with images ──
+  const staticProducts = [
+    {
+      name: "Amalfi Linen Midi Dress",
+      category: "midi",
+      desc: "Breathable 100% linen in warm terracotta. Adjustable waist tie, square neckline, and midi-length skirt with side split. Perfect for coastal evenings.",
+      price: 89.00, originalPrice: null, badge: "new", badgeLabel: "New",
+      sizes: ["XS","S","M","L"],
+      images: [
+        "https://cdn.aboutstatic.com/file/images/ecc1ead039e48567852e6c34d76f95b5.jpg?quality=75&height=1280&width=960",
+        "https://cdn.aboutstatic.com/file/images/ee7ecaf64b5ab933a9848f0a70012fe9.jpg?quality=75&height=1280&width=960",
+        "https://cdn.aboutstatic.com/file/images/6d172e662d7aec9c2e94c4dce790c415.jpg?quality=75&height=1280&width=960"
+      ]
+    },
+    {
+      name: "Botanical Wrap Dress",
+      category: "wrap",
+      desc: "Flowy wrap silhouette in a lush botanical print on cream. V-neckline, flutter sleeves, self-tie waist. Lightweight viscose fabric, true to size.",
+      price: 74.90, originalPrice: 99.00, badge: "sale", badgeLabel: "Sale",
+      sizes: ["S","M","L","XL"],
+      images: [
+        "https://cdn.aboutstatic.com/file/images/7d35c0b62c05a268429cddc225c605d5.jpg?quality=75&height=1067&width=800",
+        "https://cdn.aboutstatic.com/file/images/d8e92c7cc98f5acce34086259eee65c1.jpg?quality=75&height=1280&width=960",
+        "https://cdn.aboutstatic.com/file/images/38a78b459597a68db0c00b9204b9a53a.jpg?quality=75&height=1280&width=960"
+      ]
+    },
+    {
+      name: "Santorini Maxi Sundress",
+      category: "maxi",
+      desc: "Floor-length maxi in sky blue cotton. Spaghetti straps, smocked bodice, and tiered skirt. Fully lined. Great for beach-to-dinner transitions.",
+      price: 109.00, originalPrice: null, badge: "hot", badgeLabel: "Bestseller",
+      sizes: ["XS","S","M","L","XL"],
+      images: [
+        "https://cdn.aboutstatic.com/file/images/a8c9979f06dca8cb549faa21107ee237.jpg?quality=75&height=1280&width=960",
+        "https://cdn.aboutstatic.com/file/images/3dc0105fd5834695bbe0fb3593a23533.jpg?brightness=0.96&quality=75&trim=1&height=1280&width=960",
+        "https://cdn.aboutstatic.com/file/images/8711581ecb166835e98d3bdb561b5c9c.jpg?brightness=0.96&quality=75&trim=1&height=1280&width=960"
+      ]
+    },
+    {
+      name: "Wildflower Mini Dress",
+      category: "mini",
+      desc: "Fun and flirty mini with an all-over wildflower print. Puff sleeves, elasticated neckline, hidden back zip. Cotton-blend, lightweight and easy to style.",
+      price: 59.00, originalPrice: null, badge: "new", badgeLabel: "New",
+      sizes: ["XS","S","M"],
+      images: [
+        "https://cdn.aboutstatic.com/file/images/a0b5484675880b763bd40e84928788b2.jpg?quality=75&height=1280&width=960",
+        "https://cdn.aboutstatic.com/file/images/880120c8c15e936ca12d2b014ef69fb6.jpg?brightness=0.96&quality=75&trim=1&height=1280&width=960",
+        "https://cdn.aboutstatic.com/file/images/4f92bf3453a1205e1db68c888349fb1a.jpg?quality=75&height=1280&width=960"
+      ]
+    },
+    {
+      name: "Riviera Floral Midi",
+      category: "floral",
+      desc: "Elegant midi with a bold retro floral print inspired by the French Riviera. Halter neck, open back with tie detail, and A-line silhouette. Lined.",
+      price: 129.00, originalPrice: null, badge: "limited", badgeLabel: "Limited",
+      sizes: ["S","M","L"],
+      images: [
+        "https://cdn.aboutstatic.com/file/images/e52c851fe7210d4f83310edc33fb98b2.jpg?quality=75&height=1280&width=960",
+        "https://cdn.aboutstatic.com/file/images/7f25aa59232b755972365be3c0ecfb43.jpg?brightness=0.96&quality=75&trim=1&height=1280&width=960",
+        "https://cdn.aboutstatic.com/file/images/ce2760b98ecde5510ced1a69a92306f7.jpg?brightness=0.96&quality=75&trim=1&height=1280&width=960"
+      ]
+    },
+    {
+      name: "Golden Hour Maxi",
+      category: "maxi",
+      desc: "Soft satin-touch maxi in champagne gold. Cowl neck, thin straps, and a subtle side slit. Effortlessly glamorous — perfect for weddings and garden parties.",
+      price: 149.00, originalPrice: 189.00, badge: "sale", badgeLabel: "Sale",
+      sizes: ["XS","S","M","L"],
+      images: [
+        "https://cdn.aboutstatic.com/file/images/bffeb539df149ccdac85703629ad162a.jpg?quality=75&height=1280&width=960",
+        "https://cdn.aboutstatic.com/file/images/df7ed6a67d3eabca0e9dfafb73cf92b5.jpg?quality=75&height=1280&width=960",
+        "https://cdn.aboutstatic.com/file/2208387131ce840a8f70f56a705914c6?brightness=0.96&quality=75&trim=1&height=1280&width=960"
+      ]
+    },
+    {
+      name: "Portofino Wrap Mini",
+      category: "wrap",
+      desc: "Chic wrap mini in a citrus stripe linen blend. V-neck wrap front, short sleeves, and adjustable tie waist. Relaxed Mediterranean feel, very versatile.",
+      price: 68.00, originalPrice: null, badge: "hot", badgeLabel: "Trending",
+      sizes: ["S","M","L","XL"],
+      images: [
+        "https://cdn.aboutstatic.com/file/images/b1ed935841d580541226d05cbc7b308a.jpg?quality=75&height=1280&width=960",
+        "https://cdn.aboutstatic.com/file/images/a26b8f17509ce44837ec866207d6df35.jpg?quality=75&height=1280&width=960",
+        "https://cdn.aboutstatic.com/file/images/16d48c866758b2f5d7ceb42dca2cc10a.png?bg=F4F4F5&quality=75&trim=1&height=1280&width=960"
+      ]
+    }
+  ];
+
+  // ── Google Sheets CSV URL ──
+  const SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTq_OhkGy2et0RdkNn91yqgu2niVRV25XVS27v2jqMM_1ryXbLaz7Jhb-3FZ4h83bNRC-OreZz69XLO/pub?gid=0&single=true&output=csv";
+
+  let allProducts = [...staticProducts];
+  let currentFilter = 'all';
+  let currentSort = 'default';
+  let searchTerm = '';
+  const liked = new Set();
+  const slideState = {};
+
+  function getBadgeClass(b) {
+    return { new: 'badge-new', hot: 'badge-hot', sale: 'badge-sale', limited: 'badge-limited' }[b] || 'badge-new';
+  }
+
+  function parseCSV(text) {
+    const lines = text.trim().split('\n');
+    if (lines.length < 2) return [];
+    const headers = lines[0].split(',').map(h => h.trim().replace(/^"|"$/g, '').toLowerCase());
+    return lines.slice(1).map(line => {
+      const vals = [];
+      let inQuote = false, cur = '';
+      for (let ch of line) {
+        if (ch === '"') { inQuote = !inQuote; }
+        else if (ch === ',' && !inQuote) { vals.push(cur.trim()); cur = ''; }
+        else cur += ch;
+      }
+      vals.push(cur.trim());
+      const obj = {};
+      headers.forEach((h, i) => obj[h] = (vals[i] || '').replace(/^"|"$/g, ''));
+      return obj;
+    }).filter(r => r.name && r.name.length > 0);
+  }
+
+  function sheetRowToProduct(row) {
+    // Expected columns: name, category, desc, price, badge, img (comma-sep or img1/img2/img3)
+    const imgs = [];
+    if (row.img) imgs.push(...row.img.split('|').map(s=>s.trim()).filter(Boolean));
+    if (row.img1) imgs.push(row.img1.trim());
+    if (row.img2) imgs.push(row.img2.trim());
+    if (row.img3) imgs.push(row.img3.trim());
+    const imgList = imgs.length ? imgs : ['https://placehold.co/600x800/F5EFE7/A8998C?text=No+Image'];
+    const badgeMap = { new:'New', hot:'Bestseller', sale:'Sale', limited:'Limited', top:'Top' };
+    const b = (row.badge||'new').toLowerCase();
+    return {
+      name: row.name || 'Unnamed Dress',
+      category: (row.category || 'midi').toLowerCase(),
+      desc: row.desc || '',
+      price: parseFloat(row.price) || 0,
+      originalPrice: row.originalprice ? parseFloat(row.originalprice) : null,
+      badge: b,
+      badgeLabel: badgeMap[b] || row.badge || 'New',
+      sizes: row.sizes ? row.sizes.split(',').map(s=>s.trim()) : ['S','M','L'],
+      images: imgList,
+      fromSheet: true
+    };
+  }
+
+  async function loadSheetProducts() {
+    try {
+      const res = await fetch(SHEET_URL);
+      if (!res.ok) throw new Error('fetch failed');
+      const text = await res.text();
+      const rows = parseCSV(text);
+      const sheetProds = rows.map(sheetRowToProduct);
+      if (sheetProds.length > 0) {
+        allProducts = [...staticProducts, ...sheetProds];
+      }
+    } catch(e) {
+      console.warn('Could not load Google Sheet:', e);
+    }
+    document.getElementById('loadingState').style.display = 'none';
+    renderProducts();
+  }
+
+  function slide(cardIdx, dir) {
+    if (!slideState[cardIdx]) slideState[cardIdx] = 0;
+    const imgs = allProducts[cardIdx].images;
+    slideState[cardIdx] = (slideState[cardIdx] + dir + imgs.length) % imgs.length;
+    updateSlider(cardIdx);
+  }
+
+  function goToSlide(cardIdx, dotIdx) {
+    slideState[cardIdx] = dotIdx;
+    updateSlider(cardIdx);
+  }
+
+  function updateSlider(cardIdx) {
+    const track = document.querySelector(`[data-card="${cardIdx}"] .slider-track`);
+    const dots = document.querySelectorAll(`[data-card="${cardIdx}"] .dot`);
+    if (!track) return;
+    const cur = slideState[cardIdx] || 0;
+    track.style.transform = `translateX(-${cur * 100}%)`;
+    dots.forEach((d, i) => d.classList.toggle('active', i === cur));
+  }
+
+  function toggleLike(idx) {
+    if (liked.has(idx)) liked.delete(idx); else liked.add(idx);
+    const btn = document.querySelector(`[data-card="${idx}"] .card-wishlist`);
+    if (btn) { btn.classList.toggle('liked', liked.has(idx)); btn.textContent = liked.has(idx) ? '♥' : '♡'; }
+  }
+
+  function renderProducts() {
+    let filtered = allProducts.filter((p, i) => {
+      const matchCat = currentFilter === 'all' || p.category === currentFilter;
+      const matchSearch = p.name.toLowerCase().includes(searchTerm) || p.desc.toLowerCase().includes(searchTerm);
+      return matchCat && matchSearch;
+    });
+
+    const sortedIndices = filtered.map((p) => allProducts.indexOf(p));
+
+    if (currentSort === 'price-asc') { const z = [...filtered.map((_,i)=>i)]; z.sort((a,b)=>filtered[a].price-filtered[b].price); filtered = z.map(i=>filtered[i]); }
+    else if (currentSort === 'price-desc') { const z = [...filtered.map((_,i)=>i)]; z.sort((a,b)=>filtered[b].price-filtered[a].price); filtered = z.map(i=>filtered[i]); }
+    else if (currentSort === 'name') filtered.sort((a,b)=>a.name.localeCompare(b.name));
+
+    document.getElementById('productCount').textContent = filtered.length + (filtered.length === 1 ? ' dress available' : ' dresses available');
+
+    const grid = document.getElementById('productGrid');
+    grid.innerHTML = filtered.map(p => {
+      const origIdx = allProducts.indexOf(p);
+      const cur = slideState[origIdx] || 0;
+      const isLiked = liked.has(origIdx);
+      const imgs = p.images || [];
+      return `
+      <div class="card" data-card="${origIdx}">
+        <div class="card-slider">
+          <div class="slider-track">
+            ${imgs.map(url => `
+              <div class="slide">
+                <img src="${url}" alt="${p.name}" loading="lazy" />
+              </div>
+            `).join('')}
+          </div>
+          ${imgs.length > 1 ? `
+            <button class="slider-btn prev" onclick="event.stopPropagation();slide(${origIdx},-1)">‹</button>
+            <button class="slider-btn next" onclick="event.stopPropagation();slide(${origIdx},1)">›</button>
+            <div class="slider-dots">
+              ${imgs.map((_,i) => `<div class="dot ${i===cur?'active':''}" onclick="event.stopPropagation();goToSlide(${origIdx},${i})"></div>`).join('')}
+            </div>
+          ` : ''}
+          <button class="card-wishlist ${isLiked?'liked':''}" onclick="event.stopPropagation();toggleLike(${origIdx})">${isLiked?'♥':'♡'}</button>
+        </div>
+        <div class="card-body">
+          <div class="card-meta">
+            <span class="card-category">${p.category}</span>
+            <span class="badge ${getBadgeClass(p.badge)}">${p.badgeLabel}</span>
+          </div>
+          <h3>${p.name}</h3>
+          <p class="card-desc">${p.desc}</p>
+          <div class="card-sizes">${(p.sizes||[]).map(s=>`<span class="size-pill">${s}</span>`).join('')}</div>
+          <div class="card-footer">
+            <div class="price-wrap">
+              <span class="price">€${Number(p.price).toFixed(2)}</span>
+              ${p.originalPrice ? `<span class="price-original">€${Number(p.originalPrice).toFixed(2)}</span>` : ''}
+            </div>
+            <button class="btn-card">View Details →</button>
+          </div>
+        </div>
+      </div>`;
+    }).join('');
+  }
+
+  function setFilter(cat, btn) {
+    currentFilter = cat;
+    document.querySelectorAll('.chip').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    renderProducts();
+  }
+  function sortProducts(val) { currentSort = val; renderProducts(); }
+  function filterProducts() {
+    searchTerm = document.getElementById('searchInput').value.toLowerCase().trim();
+    renderProducts();
+  }
+  document.getElementById('searchInput').addEventListener('keyup', e => { if (e.key === 'Enter') filterProducts(); });
+
+  // Load sheet then render
+  loadSheetProducts();
+</script>
+</body>
+</html>
